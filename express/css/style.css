@@ -19,13 +19,17 @@
 /* COLUMN SETUP */
 .card {
     border: thin double;
+    background: white;
     display: block;
     float: left;
     margin: 1% 0 1% 1.6%; /*1.6% is about 20px for most monitors */
+    padding: 5px;
+    width: 200px;
+    overflow: auto;
 }
-.card:first-child {
+/* .card:first-child {
     margin-left: 0;
-}
+} */
 
 /* GROUPING */
 .group:before,

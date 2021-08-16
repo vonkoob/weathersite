@@ -83,15 +83,25 @@ function displayWeather(weatherData) {
     });
     const forecastHtml = weatherArray.map(element => {
         const date = element.valid_date;
+        const dayOfWeek = getDayName(date, "en-US");
         const weatherDesc = element.weather.description;
         return `
         <div class="card span_1_of_7">
-            <h2>Date: ${date}</h2>
-            <p>Condition: ${weatherDesc}</p>
+            <h2>Date: ${dayOfWeek}</h2>
+            <p style=>${date}</p>
+            <img height="50" width="50" src="https://www.weatherbit.io/static/img/icons/${element.weather.icon}.png">
+            <p><b>Temp:</b> ${element.low_temp} to ${element.max_temp}</p>
+            <p><b>Condition:</b> ${weatherDesc}</p>
+            <p><b>Wind:</b> ${element.wind_spd} ${element.wind_cdir}</p>
         </div>
         `;
     }).join('');
     forecast.innerHTML = forecastHtml;
+}
+
+function getDayName(dateStr, locale) {
+    var date = new Date(dateStr.replace(/-/g, '\/')); // Convert from YYYY-MM-DD to YYYY/MM/DD cause JS dates are...
+    return date.toLocaleDateString(locale, { weekday: 'long' });
 }
 
 const forecast = document.querySelector('.forecast');
