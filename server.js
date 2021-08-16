@@ -1,7 +1,16 @@
 const http = require('http');
 const express = require('express');
+const cors = require('cors');
 const path = require('path');
 const app = express();
+
+// Add list of allowed origins
+const corsOptions = {
+  origin: '*'
+}
+
+
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.static("express"));
 // default URL for website

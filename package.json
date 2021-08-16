@@ -6,6 +6,11 @@
         "start": "node server.js"
     },
     "dependencies": {
-        "express": "^4.17.1"
+        "cors": "^2.8.5",
+        "express": "^4.17.1",
+        "react-geocode": "^0.2.3"
+    },
+    "devDependencies": {
+        "@types/cors": "^2.8.12"
     }
 }
