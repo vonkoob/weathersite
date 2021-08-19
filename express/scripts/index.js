@@ -1,3 +1,6 @@
+/* 
+  LOCATION SECTION - related to search and selection
+*/
 //pull json for cities from Miserlou's API
 const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
 
@@ -14,10 +17,6 @@ function findMatches(wordToMatch, cities) {
   });
 }
 
-// function numberWithCommas(x) {
-//   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-// }
-
 function displayMatches() {
   const matchArray = findMatches(this.value, cities);
   const html = matchArray.map(place => {
@@ -25,6 +24,7 @@ function displayMatches() {
     const cityName = place.city.replace(regex, `<span class="hl">${this.value}</span>`);
     const stateName = place.state.replace(regex, `<span class="hl">${this.value}</span>`);
     const fullLocation = place.city +', '+ place.state;
+    // build the html for each search result
     return `
       <li>
         <button onclick="change_location(this)" value="${fullLocation}">
@@ -45,24 +45,28 @@ searchInput.addEventListener('keyup', displayMatches);
 function change_location(objButton){
     let fullLocationName = objButton.value;
     document.getElementById("selectedLocation").innerHTML = fullLocationName;
-    // Get geo cords for location
-    let trimmedLocationName = fullLocationName.substring(0, fullLocationName.indexOf(","));
     getWeather(fullLocationName);
-    //getWeather(trimmedLocationName); // the MetaWeather API doesn't like state specifications so just sending city
 }
+/* END LOCATION SECTION */
 
+/*
+  WEATHER SECTION - functionality to retrieve data from weatherBitAPI and display results
+*/
 const weatherBitAPIkey = '725b6e0e639448a281a8cca57ee6f9ac';
+const forecast = document.querySelector('.forecast');
 
 function getWeather(location){
     var request = new XMLHttpRequest()
 
     // open the request to weatherbit API
+    // hardcoded to limit results to 7, can be extended to 16(?)
     request.open('GET', 'https://api.weatherbit.io/v2.0/forecast/daily?city=' + location + '&days=7' +'&key=' + weatherBitAPIkey , true)
 
     request.onload = function() {
         // begin accessing JSON data here
         var data = JSON.parse(this.response)
 
+        // Check if the request was successful(ish)
         if (request.status >= 200 && request.status < 400) {
             console.log(data);
             console.log(data.data[0].weather.description);
@@ -70,6 +74,7 @@ function getWeather(location){
             displayWeather(data);
         } else {
             console.log('error')
+            // TODO- better error handling, send graceful error to user
         }
     }
     //Send request
@@ -85,6 +90,7 @@ function displayWeather(weatherData) {
         const date = element.valid_date;
         const dayOfWeek = getDayName(date, "en-US");
         const weatherDesc = element.weather.description;
+        // build the html for each day result
         return `
         <div class="card span_1_of_7">
             <h2>Date: ${dayOfWeek}</h2>
@@ -104,4 +110,4 @@ function getDayName(dateStr, locale) {
     return date.toLocaleDateString(locale, { weekday: 'long' });
 }
 
-const forecast = document.querySelector('.forecast');
+/* END WEATHER SECTION */
