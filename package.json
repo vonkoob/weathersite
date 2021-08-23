@@ -1,16 +1,27 @@
 {
-    "name": "node-weathersite",
-    "version": "1.0.0",
-    "description": "",
-    "scripts": {
-        "start": "node server.js"
-    },
-    "dependencies": {
-        "cors": "^2.8.5",
-        "express": "^4.17.1",
-        "react-geocode": "^0.2.3"
-    },
-    "devDependencies": {
-        "@types/cors": "^2.8.12"
-    }
+  "name": "node-weathersite",
+  "version": "1.0.0",
+  "description": "Simple project using Node.js, HTML, CSS, and Javascript to allow a user to search for a location (within the US), select, and view a 7-day weather forecast for the selected location.",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.12"
+  },
+  "main": "server.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vonkoob/weathersite.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vonkoob/weathersite/issues"
+  },
+  "homepage": "https://github.com/vonkoob/weathersite#readme"
 }

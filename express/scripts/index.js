@@ -19,7 +19,7 @@ function findMatches(wordToMatch, cities) {
 
 function displayMatches() {
   const matchArray = findMatches(this.value, cities);
-  const html = matchArray.map(place => {
+  const html = matchArray.slice(0,15).map(place => {
     const regex = new RegExp(this.value, 'gi');
     const cityName = place.city.replace(regex, `<span class="hl">${this.value}</span>`);
     const stateName = place.state.replace(regex, `<span class="hl">${this.value}</span>`);
@@ -33,7 +33,28 @@ function displayMatches() {
       </li>
     `;
   }).join('');
-  suggestions.innerHTML = html;
+
+  let finalHtml = html;
+
+  console.log(matchArray.length);
+  if (matchArray.length > 15) {
+    const searchRefineTip = `
+    <li>
+      (Results limited to the top 15 results, please refine your search or select from the above list)
+    </li>`;
+    // Only add the above item if we are limiting the search results
+    finalHtml = html + searchRefineTip;
+  } else if (matchArray.length <= 0) {
+    const emptySearchTip = `
+    <li>
+      There are no results for the search term(s) used. Please try again
+    </li>
+    `;
+    // Show notification with search showing nothing
+    finalHtml = emptySearchTip;
+  }
+  // suggestions.innerHTML = html;
+  suggestions.innerHTML = finalHtml;
 }
 
 const searchInput = document.querySelector('.search');
@@ -55,50 +76,68 @@ function change_location(objButton){
 const weatherBitAPIkey = '725b6e0e639448a281a8cca57ee6f9ac';
 const forecast = document.querySelector('.forecast');
 
-function getWeather(location){
-    var request = new XMLHttpRequest()
+function getWeather(location) {
+  var request = new XMLHttpRequest()
 
-    // open the request to weatherbit API
-    // hardcoded to limit results to 7, can be extended to 16(?)
-    request.open('GET', 'https://api.weatherbit.io/v2.0/forecast/daily?city=' + location + '&days=7' +'&key=' + weatherBitAPIkey , true)
+  let sanitizedLocation = location.replace(/[^A-Za-z0-9,]/g, '');
+  console.log(sanitizedLocation);
 
-    request.onload = function() {
+  // open the request to weatherbit API
+  // hardcoded to limit results to 7, can be extended to 16(?)
+  // request.open('GET', 'https://api.weatherbit.io/v2.0/forecast/daily?city=' + location + '&days=7' + '&key=' + weatherBitAPIkey, true)
+  request.open('GET', 'https://api.weatherbit.io/v2.0/forecast/daily?city=' + sanitizedLocation + '&days=7' + '&key=' + weatherBitAPIkey, true)
+
+  const fullAPIendpoint = 'https://api.weatherbit.io/v2.0/forecast/daily?city=' + sanitizedLocation + '&days=7' + '&key=' + weatherBitAPIkey;
+  
+  console.log(fullAPIendpoint);
+
+  request.onload = function () {
+    if (request) {
+      try {
         // begin accessing JSON data here
         var data = JSON.parse(this.response)
 
         // Check if the request was successful(ish)
         if (request.status >= 200 && request.status < 400) {
-            console.log(data);
-            console.log(data.data[0].weather.description);
-            // call function to build the display
-            displayWeather(data);
+          console.log(data);
+          console.log(data.data[0].weather.description);
+          // call function to build the display
+          displayWeather(data);
         } else {
-            console.log('error')
-            // TODO- better error handling, send graceful error to user
+          console.log('error')
+          // TODO- better error handling, send graceful error to user
         }
+      } catch (e) {
+        // alert(e); // error in the above string/JSON response
+        alert("Error loading weather forecast for " + location);
+      }
     }
-    //Send request
-    request.send()
+  }
+  //Send request
+  request.send()
 }
 
 function displayWeather(weatherData) {
     var weatherArray = weatherData.data;
-    weatherArray.forEach(element => {
-        console.log(element.weather.description + ' on ' + element.valid_date);
-    });
+    // weatherArray.forEach(element => {
+    //     console.log(element.weather.description + ' on ' + element.valid_date);
+    // });
     const forecastHtml = weatherArray.map(element => {
         const date = element.valid_date;
         const dayOfWeek = getDayName(date, "en-US");
         const weatherDesc = element.weather.description;
+        const lowTempF = Math.round((element.low_temp * 9 / 5 + 32) * 10) / 10; // Convert to F and round
+        const highTempF = Math.round((element.max_temp * 9 / 5 + 32) * 10) / 10; // Convert to F and round
+        const windSpeed = Math.round(element.wind_spd * 100) / 100; //Round to 2 decimals
         // build the html for each day result
         return `
         <div class="card span_1_of_7">
             <h2>Date: ${dayOfWeek}</h2>
             <p style=>${date}</p>
-            <img height="50" width="50" src="https://www.weatherbit.io/static/img/icons/${element.weather.icon}.png">
-            <p><b>Temp:</b> ${element.low_temp} to ${element.max_temp}</p>
+            <img height="50" width="50" src="https://www.weatherbit.io/static/img/icons/${element.weather.icon}.png" alt="${weatherDesc}">
+            <p><b>Temp:</b> ${lowTempF}<span>&#176;</span> to ${highTempF}<span>&#176;</span> </p>
             <p><b>Condition:</b> ${weatherDesc}</p>
-            <p><b>Wind:</b> ${element.wind_spd} ${element.wind_cdir}</p>
+            <p><b>Wind:</b> ${windSpeed} ${element.wind_cdir}</p>
         </div>
         `;
     }).join('');
