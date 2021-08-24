@@ -1,5 +1,6 @@
 .content-body {
     border: thick double #32a1ce;
+    border-radius: 2rem;
     background-color: #e9e9e9;
     margin: 2rem;
     padding: 1rem;
@@ -13,6 +14,10 @@
     clear: both;
     padding: 0px;
     margin: 0px;
+}
+
+.suggestions {
+    line-height: 2em;
 }
 
 /* this creates fluid width columns as space is available */

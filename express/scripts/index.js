@@ -134,7 +134,7 @@ function displayWeather(weatherData) {
     // build the html for each day result
     return `
       <div class="card">
-          <h2>Date: ${dayOfWeek}</h2>
+          <h2>${dayOfWeek}</h2>
           <p style=>${date}</p>
           <img height="50" width="50" src="https://www.weatherbit.io/static/img/icons/${element.weather.icon}.png" alt="${weatherDesc}">
           <p><b>Temp:</b> ${lowTempF}<span>&#176;</span> to ${highTempF}<span>&#176;</span> </p>
